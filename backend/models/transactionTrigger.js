@@ -12,18 +12,15 @@ TransactionTrigger.init(
     },
     senderId: {
       type: DataTypes.TEXT,
-      allowNull: false,
     },
     receiverId: {
       type: DataTypes.TEXT,
-      allowNull: false,
     },
-    amount: {
+    minQubic: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        min: 0,
-      },
+    },
+    maxQubic: {
+      type: DataTypes.INTEGER,
     },
   },
   {
