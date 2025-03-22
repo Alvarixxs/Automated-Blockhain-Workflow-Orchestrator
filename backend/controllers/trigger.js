@@ -5,6 +5,10 @@ const {
   SmartContractTrigger,
 } = require("../models");
 
+router.get("/", async (req, res, next) => {
+  res.status(200).end();
+});
+
 router.post("/transaction", async (req, res, next) => {
   try {
     const trigger = await Trigger.create({
@@ -18,6 +22,42 @@ router.post("/transaction", async (req, res, next) => {
       amount: req.body.amount,
     });
     res.json(transactionTrigger);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("transaction/:id", async (req, res, next) => {
+  try {
+    await Trigger.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+    await TransactionTrigger.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("smartContract/:id", async (req, res, next) => {
+  try {
+    await Trigger.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+    await SmartContractTrigger.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+    res.status(204).end();
   } catch (error) {
     next(error);
   }
