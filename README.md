@@ -44,6 +44,5 @@ The webhook sends data to Zapier/Make, triggering:
 
 # - Track how confident is people with qubic
 
-# 
 
 
