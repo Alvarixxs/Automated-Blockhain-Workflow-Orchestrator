@@ -1,0 +1,145 @@
+services:
+  # Archiver node services
+  qubic-http:
+    image: ghcr.io/qubic/qubic-http:v0.8.0
+    container_name: qubic-http
+    labels:
+      # Traefik
+      - "traefik.enable=true"
+      ## Router
+      - "traefik.http.routers.qubic-http.entrypoints=web"
+      - "traefik.http.routers.qubic-http.rule=(PathPrefix(`/v1/broadcast-transaction`) || PathPrefix(`/v1/block-height`) || PathPrefix(`/v1/tick-info`) || PathPrefix(`/v1/balances`) || PathPrefix(`/v1/assets`) || PathPrefix(`/v1/querySmartContract`))"
+      - "traefik.http.routers.qubic-http.middlewares=qubic-http-stripprefix, cors-http"
+      ## Middlewares
+      - "traefik.http.middlewares.qubic-http-stripprefix.stripprefix.prefixes=/v1"
+      - "traefik.http.middlewares.cors-http.headers.accesscontrolallowmethods=*"
+      - "traefik.http.middlewares.cors-http.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.cors-http.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.cors-http.headers.accesscontrolmaxage=300"
+      - "traefik.http.middlewares.cors-http.headers.addvaryheader=true"
+      ## Services
+      - "traefik.http.services.qubic-http.loadbalancer.server.port=8000"
+    environment:
+      QUBIC_API_SIDECAR_SERVER_HTTP_HOST: "0.0.0.0:8000"
+      QUBIC_API_SIDECAR_SERVER_GRPC_HOST: "0.0.0.0:8001"
+      QUBIC_API_SIDECAR_SERVER_MAX_TICK_FETCH_URL: "http://qubic-nodes:8080/max-tick"
+      QUBIC_API_SIDECAR_POOL_NODE_FETCHER_URL: "http://qubic-nodes:8080/status"
+      QUBIC_API_SIDECAR_POOL_NODE_FETCHER_TIMEOUT: "20s"
+      QUBIC_API_SIDECAR_POOL_NODE_PORT: "31841"
+    networks:
+      - traefik
+    depends_on:
+      qubic-nodes:
+        condition: service_healthy
+    restart: always
+  qubic-archiver:
+    image: ghcr.io/qubic/qubic-archiver:v0.10.1
+    container_name: qubic-archiver
+    labels:
+      # Traefik
+      - "traefik.enable=true"
+      ## Router
+      - "traefik.http.routers.qubic-archiver.entrypoints=web"
+      - "traefik.http.routers.qubic-archiver.rule=PathPrefix(`/v1`) || PathPrefix(`/v2`)"
+      - "traefik.http.routers.qubic-archiver.middlewares=cors-archiver, customheaders"
+      ## Middlewares
+      - "traefik.http.middlewares.cors-archiver.headers.accesscontrolallowmethods=*"
+      - "traefik.http.middlewares.cors-archiver.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.cors-archiver.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.cors-archiver.headers.accesscontrolmaxage=300"
+      - "traefik.http.middlewares.cors-archiver.headers.addvaryheader=true"
+      - "traefik.http.middlewares.customheaders.headers.customresponseheaders.X-Server-Name=testnet01"
+      - "traefik.http.middlewares.http-cache.plugin.souin.api.souin"
+      - "traefik.http.middlewares.http-cache.plugin.souin.default_cache.ttl=5s"
+      - "traefik.http.middlewares.http-cache.plugin.souin.default_cache.allowed_http_verbs=GET,HEAD,POST"
+      - "traefik.http.middlewares.http-cache.plugin.souin.log_level=debug"
+      ## Service
+      - "traefik.http.services.qubic-archiver.loadbalancer.server.port=8000"
+      # Disable healthcheck
+      #- "traefik.http.services.qubic-archiver.loadbalancer.healthcheck.path=/v1/healthcheck"
+      #- "traefik.http.services.qubic-archiver.loadbalancer.healthcheck.interval=10s""
+      #- "traefik.http.services.qubic-archiver.loadbalancer.healthcheck.timeout=5s"
+      #- "traefik.http.services.qubic-archiver.loadbalancer.healthcheck.scheme=http"
+    ports:
+      - "127.0.0.1:8001:8000"
+    environment:
+      QUBIC_ARCHIVER_SERVER_HTTP_HOST: "0.0.0.0:8000"
+      QUBIC_ARCHIVER_SERVER_GRPC_HOST: "0.0.0.0:8001"
+      QUBIC_ARCHIVER_SERVER_NODE_SYNC_THRESHOLD: 10
+      QUBIC_ARCHIVER_SERVER_CHAIN_TICK_FETCH_URL: "http://qubic-nodes:8080/max-tick"
+      QUBIC_ARCHIVER_POOL_NODE_FETCHER_URL: "http://qubic-nodes:8080/status"
+      QUBIC_ARCHIVER_QUBIC_PROCESS_TICK_TIMEOUT: "5s"
+      QUBIC_ARCHIVER_STORE_RESET_EMPTY_TICK_KEYS: false
+
+      QUBIC_ARCHIVER_QUBIC_NODE_PORT: 31841
+      QUBIC_ARCHIVER_QUBIC_DISABLE_TRANSACTION_STATUS_ADDON: true
+      QUBIC_ARCHIVER_QUBIC_ARBITRATOR_IDENTITY: "MEFKYFCDXDUILCAJKOIKWQAPENJDUHSSYPBRWFOTLALILAYWQFDSITJELLHG"
+    volumes:
+      - ./store/archiver:/app/store
+    networks:
+      - traefik
+    depends_on:
+      qubic-nodes:
+        condition: service_healthy
+    restart: always
+  qubic-nodes:
+    image: ghcr.io/qubic/qubic-nodes:v2.0.0
+    container_name: qubic-nodes
+    labels:
+      # Traefik
+      - "traefik.enable=true"
+      ## Router
+      - "traefik.http.routers.qubic-nodes.entrypoints=web"
+      - "traefik.http.routers.qubic-nodes.rule=PathPrefix(`/v1/node-info`)"
+      - "traefik.http.routers.qubic-nodes.middlewares=qubic-nodes-replacepath, cors-nodes"
+      - "traefik.http.routers.qubic-nodes.priority=90"
+      ## Middlewares
+      - "traefik.http.middlewares.qubic-nodes-replacepath.replacepath.path=/status"
+      - "traefik.http.middlewares.cors-nodes.headers.accesscontrolallowmethods=*"
+      - "traefik.http.middlewares.cors-nodes.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.cors-nodes.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.cors-nodes.headers.accesscontrolmaxage=300"
+      - "traefik.http.middlewares.cors-nodes.headers.addvaryheader=true"
+      ## Services
+      - "traefik.http.services.qubic-nodes.loadbalancer.server.port=8080"
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      QUBIC_NODES_QUBIC_PEER_LIST: "66.248.204.226"
+      QUBIC_NODES_QUBIC_PEER_PORT: 31841
+      QUBIC_NODES_QUBIC_RELIABLE_TICK_RANGE: "20"
+    networks:
+      - traefik
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/status"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+  traefik:
+    image: traefik:v3.0.0
+    container_name: traefik
+    ports:
+      #- "443:443"
+      - "8088:80"
+      - "127.0.0.1:8081:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - traefik
+    depends_on:
+      - "qubic-archiver"
+    command:
+      - "--accesslog=true"
+      - "--api.insecure=true"
+      - "--metrics.prometheus=true"
+      - "--metrics.prometheus.buckets=0.1,0.3,1.2,5.0"
+      - "--providers.docker=true"
+      - "--providers.docker.watch"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--experimental.plugins.souin.moduleName=github.com/darkweak/souin"
+      - "--experimental.plugins.souin.version=v1.7.5"
+    restart: always
+networks:
+  traefik:
