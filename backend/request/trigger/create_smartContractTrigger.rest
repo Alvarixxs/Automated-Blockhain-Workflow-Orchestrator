@@ -1,0 +1,11 @@
+POST http://localhost:3001/api/trigger/smartContract
+Content-Type: application/json
+
+{
+  "webhook": "",
+  "senderId": "dddsdfsd",
+  "receiverId": "fsdfsdfs",
+  "amount": 100
+}
+
+###
