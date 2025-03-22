@@ -8,7 +8,7 @@
 
 # USE CASES:
 
-- Who Needs It? Businesses & freelancers who accept Qubic payments.
+# - Who Needs It? Businesses & freelancers who accept Qubic payments.
 🔹 How It Works:
 
 A customer sends QU tokens to a business’s smart contract address.
@@ -20,7 +20,7 @@ The webhook notifies Zapier/Make, triggering:
 ✅ Email confirmation to the customer.
 ✅ Slack notification for the finance team.
 
-- Real-Time Crypto Trading Alerts
+# - Real-Time Crypto Trading Alerts
 👤 Who Needs It? Crypto traders & hedge funds.
 🔹 How It Works:
 
@@ -31,7 +31,7 @@ The webhook sends data to Zapier/Make, triggering:
 ✅ An entry in a Google Sheet tracking whale movements.
 ✅ A trading strategy adjustment in an external app.
 
-- DAO Voting & Governance Automation
+# - DAO Voting & Governance Automation
 👤 Who Needs It? Decentralized autonomous organizations (DAOs).
 🔹 How It Works:
 
@@ -42,8 +42,8 @@ The webhook sends data to Zapier/Make, triggering:
 ✅ A Twitter post announcing the current vote count.
 ✅ An email reminder to members who haven’t voted yet.
 
-- Track how confident is people with qubic
+# - Track how confident is people with qubic
 
-
+# 
 
 
