@@ -9,11 +9,9 @@ module.exports = {
       },
       sender_id: {
         type: DataTypes.TEXT,
-        allowNull: false,
       },
       receiver_id: {
         type: DataTypes.TEXT,
-        allowNull: false,
       },
       min_qubic: {
         type: DataTypes.INTEGER,
