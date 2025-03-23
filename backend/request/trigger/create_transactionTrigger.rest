@@ -2,10 +2,9 @@ POST http://localhost:3001/api/trigger/transaction
 Content-Type: application/json
 
 {
-  "webhook": "",
-  "senderId": "dddsdfsd",
-  "receiverId": "fsdfsdfs",
-  "amount": 100
+  "webhook": "http://localhost:3001/api/trigger",
+  "sender_id": "EQMBBVYGZOFUIHEXFOXKTFTANEKBXLBXHAYDFFMREEMRQEVADYMMEWACTODD",
+  "min_qubic": 1000000
 }
 
 ###
