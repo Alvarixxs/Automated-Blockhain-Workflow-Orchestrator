@@ -24,8 +24,8 @@ router.post("/transaction", async (req, res, next) => {
       maxQubic: req.body.max_qubic,
     });
     res.json({
-        externalHookId: trigger.id,
-        token: "",
+      externalHookId: trigger.id,
+      token: "",
     });
   } catch (error) {
     console.error(error);
@@ -93,89 +93,83 @@ router.post("/transaction/process", async (req, res, next) => {
   try {
     const transaction = req.body;
     const { sender_id, receiver_id, amount } = transaction;
-    
+
     if (!sender_id || !receiver_id || !amount) {
-      return res.status(400).json({ error: "Missing required transaction fields" });
+      return res
+        .status(400)
+        .json({ error: "Missing required transaction fields" });
     }
-    
+
     // Find matching transaction triggers using ORM filtering
     const triggers = await TransactionTrigger.findAll({
       where: {
         [Op.and]: [
           // Match sender if defined, otherwise true
           {
-            [Op.or]: [
-              { sender_id: null },
-              { sender_id: sender_id }
-            ]
+            [Op.or]: [{ sender_id: null }, { sender_id: sender_id }],
           },
-          // Match receiver if defined, otherwise true 
+          // Match receiver if defined, otherwise true
           {
-            [Op.or]: [
-              { receiver_id: null },
-              { receiver_id: receiver_id }
-            ]
+            [Op.or]: [{ receiver_id: null }, { receiver_id: receiver_id }],
           },
           // Amount must be >= min_qubic if defined
           {
-            [Op.or]: [
-              { min_qubic: null },
-              { min_qubic: { [Op.lte]: amount } }
-            ]
+            [Op.or]: [{ min_qubic: null }, { min_qubic: { [Op.lte]: amount } }],
           },
           // Amount must be <= max_qubic if defined
           {
-            [Op.or]: [
-              { max_qubic: null }, 
-              { max_qubic: { [Op.gte]: amount } }
-            ]
-          }
-        ]
-      }
+            [Op.or]: [{ max_qubic: null }, { max_qubic: { [Op.gte]: amount } }],
+          },
+        ],
+      },
     });
 
     // Get webhook URLs for matching triggers
-    const triggerIds = triggers.map(trigger => trigger.id);
+    const triggerIds = triggers.map((trigger) => trigger.id);
     const webhookTriggers = await Trigger.findAll({
       where: {
         id: {
-          [Op.in]: triggerIds
-        }
-      }
+          [Op.in]: triggerIds,
+        },
+      },
     });
 
     // Call webhooks for matching triggers
-    const fetch = require('node-fetch');
+    const fetch = require("node-fetch");
     const matchPromises = webhookTriggers.map(async (trigger) => {
       try {
         const webhookData = {
           sender_id,
           receiver_id,
-          amount
+          amount,
         };
-        
+
         await fetch(trigger.webhook, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(webhookData)
+          body: JSON.stringify(webhookData),
         });
-        
+        console.log(`Successfully called webhook for trigger ${trigger.id}`);
+
         return { triggerId: trigger.id, success: true };
       } catch (error) {
-        console.error(`Failed to call webhook for trigger ${trigger.id}:`, error);
+        console.error(
+          `Failed to call webhook for trigger ${trigger.id}:`,
+          error
+        );
         return { triggerId: trigger.id, success: false, error: error.message };
       }
     });
 
     const results = await Promise.all(matchPromises);
-    const matchedTriggers = results.filter(result => result !== null);
-    
+    const matchedTriggers = results.filter((result) => result !== null);
+
     res.status(200).json({
       transaction_processed: true,
       triggers_matched: matchedTriggers.length,
-      results: matchedTriggers
+      results: matchedTriggers,
     });
   } catch (error) {
     console.error("Error processing transaction:", error);
