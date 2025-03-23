@@ -9,15 +9,15 @@ module.exports = {
       },
       sender_id: {
         type: DataTypes.TEXT,
-        allowNull: false,
       },
       receiver_id: {
         type: DataTypes.TEXT,
-        allowNull: false,
       },
-      amount: {
+      min_qubic: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+      },
+      max_qubic: {
+        type: DataTypes.INTEGER,
       },
     });
   },
