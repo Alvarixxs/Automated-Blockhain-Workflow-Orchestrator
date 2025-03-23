@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const PORT = 3000;
+const PORT = 3002;
 const urlBase = "https://testnet-rpc.qubic.org";
 const urlBackend = "http://localhost:3001/api/trigger/transaction/process";
 const urlBaseV1 = `${urlBase}/v1`;
