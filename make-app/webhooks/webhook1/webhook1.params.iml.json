@@ -1,0 +1,22 @@
+[
+    {
+        "name": "receiver_id",
+        "type": "text",
+        "label": "Receiver ID"
+    },
+    {
+        "name": "sender_id",
+        "type": "text",
+        "label": "Sender ID"
+    },
+    {
+        "name": "min_qubic",
+        "type": "number",
+        "label": "Minimum Qubic amount"
+    },
+    {
+        "name": "max_qubic",
+        "type": "number",
+        "label": "Maximum Qubic amount"
+    }
+]

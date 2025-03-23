@@ -1,0 +1,19 @@
+// Defines "id", "email" and "name" as module input parameters.
+[
+	{
+		"name": "id",        // Makes value accesible via "{{parameters.id}}".
+		"type": "uinteger",  // Sends the value as unsigned integer.
+		"label": "User ID",  // Sets the user friendly label visible in the module.
+		"required": true     // Sets the parameter as mandatory.
+	},
+	{
+		"name": "email",
+		"type": "email",
+		"label": "Email address"
+	},
+	{
+		"name": "name",
+		"type": "text",
+		"label": "Name"
+	}
+]

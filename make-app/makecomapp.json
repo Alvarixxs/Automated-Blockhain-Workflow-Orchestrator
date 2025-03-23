@@ -1,0 +1,158 @@
+{
+    "fileVersion": 1,
+    "generalCodeFiles": {
+        "base": "general/base.iml.json",
+        "common": null,
+        "readme": "README.md",
+        "groups": "modules/groups.json"
+    },
+    "components": {
+        "connection": {
+            "connection1": {
+                "label": "QubicFetcher",
+                "connectionType": "basic",
+                "codeFiles": {
+                    "communication": "connections/connection1/connection1.communication.iml.json",
+                    "params": "connections/connection1/connection1.params.iml.json",
+                    "common": null
+                }
+            },
+            "connection2": {
+                "label": "QubicSenderAccount",
+                "connectionType": "basic",
+                "codeFiles": {
+                    "communication": "connections/connection2/connection2.communication.iml.json",
+                    "params": "connections/connection2/connection2.params.iml.json",
+                    "common": null
+                }
+            }
+        },
+        "module": {
+            "qubicSendTransaction": {
+                "label": "Qubic Send Transaction",
+                "description": "With this you can send a transaction using your Private Key",
+                "moduleType": "action",
+                "actionCrud": "create",
+                "connection": "connection2",
+                "altConnection": null,
+                "codeFiles": {
+                    "communication": "modules/qubic-send-transaction/qubic-send-transaction.communication.iml.json",
+                    "staticParams": "modules/qubic-send-transaction/qubic-send-transaction.static-params.iml.json",
+                    "mappableParams": "modules/qubic-send-transaction/qubic-send-transaction.mappable-params.iml.json",
+                    "interface": "modules/qubic-send-transaction/qubic-send-transaction.interface.iml.json",
+                    "samples": "modules/qubic-send-transaction/qubic-send-transaction.samples.iml.json",
+                    "scope": "modules/qubic-send-transaction/qubic-send-transaction.scope.iml.json"
+                }
+            },
+            "smartContractTrigger": {
+                "label": "Wait on Qubic Smart Contract",
+                "description": "This waits on a Smart Contract",
+                "moduleType": "instant_trigger",
+                "connection": null,
+                "altConnection": null,
+                "webhook": "webhook2",
+                "codeFiles": {
+                    "communication": "modules/smart-contract-trigger/smart-contract-trigger.communication.iml.json",
+                    "staticParams": "modules/smart-contract-trigger/smart-contract-trigger.static-params.iml.json",
+                    "mappableParams": "modules/smart-contract-trigger/smart-contract-trigger.mappable-params.iml.json",
+                    "interface": "modules/smart-contract-trigger/smart-contract-trigger.interface.iml.json",
+                    "samples": "modules/smart-contract-trigger/smart-contract-trigger.samples.iml.json"
+                }
+            },
+            "testTrigger": {
+                "label": "Wait on Qubic Transaction",
+                "description": "This trigger waits on a transaction that is made in the blockchain",
+                "moduleType": "instant_trigger",
+                "connection": null,
+                "altConnection": null,
+                "webhook": "webhook1",
+                "codeFiles": {
+                    "communication": "modules/test-trigger/test-trigger.communication.iml.json",
+                    "staticParams": "modules/test-trigger/test-trigger.static-params.iml.json",
+                    "mappableParams": "modules/test-trigger/test-trigger.mappable-params.iml.json",
+                    "interface": "modules/test-trigger/test-trigger.interface.iml.json",
+                    "samples": "modules/test-trigger/test-trigger.samples.iml.json"
+                }
+            }
+        },
+        "function": {},
+        "rpc": {},
+        "webhook": {
+            "webhook1": {
+                "label": "Qubic Transaction Filter",
+                "webhookType": "web",
+                "connection": "connection1",
+                "altConnection": null,
+                "codeFiles": {
+                    "communication": "webhooks/webhook1/webhook1.communication.iml.json",
+                    "params": "webhooks/webhook1/webhook1.params.iml.json",
+                    "attach": "webhooks/webhook1/webhook1.attach.iml.json",
+                    "detach": "webhooks/webhook1/webhook1.detach.iml.json",
+                    "update": "webhooks/webhook1/webhook1.update.iml.json",
+                    "requiredScope": "webhooks/webhook1/webhook1.required-scope.iml.json"
+                }
+            },
+            "webhook2": {
+                "label": "Qubic Smart Contract Filter",
+                "webhookType": "web",
+                "connection": "connection1",
+                "altConnection": null,
+                "codeFiles": {
+                    "communication": "webhooks/webhook2/webhook2.communication.iml.json",
+                    "params": "webhooks/webhook2/webhook2.params.iml.json",
+                    "attach": "webhooks/webhook2/webhook2.attach.iml.json",
+                    "detach": "webhooks/webhook2/webhook2.detach.iml.json",
+                    "update": "webhooks/webhook2/webhook2.update.iml.json",
+                    "requiredScope": "webhooks/webhook2/webhook2.required-scope.iml.json"
+                }
+            }
+        }
+    },
+    "origins": [
+        {
+            "label": "Origin",
+            "baseUrl": "https://eu1.make.com/api",
+            "appId": "demo-hello-6d9ft4",
+            "appVersion": 1,
+            "idMapping": {
+                "connection": [
+                    {
+                        "local": "connection1",
+                        "remote": "demo-hello-6d9ft4"
+                    },
+                    {
+                        "local": "connection2",
+                        "remote": "demo-hello-6d9ft42"
+                    }
+                ],
+                "module": [
+                    {
+                        "local": "qubicSendTransaction",
+                        "remote": "qubicSendTransaction"
+                    },
+                    {
+                        "local": "smartContractTrigger",
+                        "remote": "smartContractTrigger"
+                    },
+                    {
+                        "local": "testTrigger",
+                        "remote": "testTrigger"
+                    }
+                ],
+                "function": [],
+                "rpc": [],
+                "webhook": [
+                    {
+                        "local": "webhook1",
+                        "remote": "demo-hello-6d9ft4"
+                    },
+                    {
+                        "local": "webhook2",
+                        "remote": "demo-hello-6d9ft42"
+                    }
+                ]
+            },
+            "apikeyFile": "../.secrets/apikey"
+        }
+    ]
+}

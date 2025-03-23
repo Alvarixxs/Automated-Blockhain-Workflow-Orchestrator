@@ -1,0 +1,41 @@
+[
+    {
+        "name": "smartContract",
+        "type": "select",
+        "label": "Smart Contract",
+        "options": [
+            {
+                "label": "Proposal",
+                "value": "proposal"
+            },
+            {
+                "label": "MsVault",
+                "value": "vault"
+            },
+            {
+                "label": "Qearn",
+                "value": "qearn"
+            }
+        ],
+        "required": true
+    },
+    {
+        "name": "procedure",
+        "type": "select",
+        "label": "Procedure",
+        "options": [
+            {
+                "label": "Proposal Creation",
+                "value": "proposal"
+            },
+            {
+                "label": "Proposal Voting",
+                "value": "proposal-voting"
+            },
+            {
+                "label": "MsVaultCreation",
+                "value": "create-vault"
+            }
+        ]
+    }
+]

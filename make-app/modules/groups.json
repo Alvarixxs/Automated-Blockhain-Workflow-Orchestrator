@@ -1,0 +1,20 @@
+[
+	{
+		"label": "Triggers",
+		"modules": [
+			"testTrigger"
+		]
+	},
+	{
+		"label": "Actions",
+		"modules": [
+			"qubicSendTransaction"
+		]
+	},
+	{
+		"label": "Other",
+		"modules": [
+			"smartContractTrigger"
+		]
+	}
+]
